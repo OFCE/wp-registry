@@ -1,8 +1,40 @@
 {
   "wp": [
-    { "annee": 2025, "wp": 23, "source-repo": "ofce/wp-xt-travail", "registered-by": "xtimbeau", "registered-at": "2026-08-22" },
-    { "annee": 2026, "wp": 6, "source-repo": "ofce/trec", "registered-by": "xtimbeau", "registered-at": "2026-08-22" },
-    { "annee": 2026, "wp": 9, "source-repo": "ofce/site_cahier_BL", "registered-by": "xtimbeau", "registered-at": "2026-08-22" },
-    { "annee": 2026, "wp": 10, "source-repo": "ofce/acit", "registered-by": "xtimbeau", "registered-at": "2026-08-22" }
+    {
+      "annee": 2025,
+      "wp": 23,
+      "type": "repo",
+      "source-repo": "ofce/wp-xt-travail",
+      "contact": "xavier.timbeau@sciencespo.fr",
+      "registered-by": "xtimbeau",
+      "registered-at": "2026-08-22"
+    },
+    {
+      "annee": 2026,
+      "wp": 6,
+      "type": "repo",
+      "source-repo": "ofce/trec",
+      "contact": "xavier.timbeau@sciencespo.fr",
+      "registered-by": "xtimbeau",
+      "registered-at": "2026-08-22"
+    },
+    {
+      "annee": 2026,
+      "wp": 9,
+      "type": "repo",
+      "source-repo": "ofce/site_cahier_BL",
+      "contact": "benjamin.largier@sciencespo.fr",
+      "registered-by": "xtimbeau",
+      "registered-at": "2026-08-22"
+    },
+    {
+      "annee": 2026,
+      "wp": 10,
+      "type": "repo",
+      "source-repo": "ofce/acit",
+      "contact": "xavier.timbeau@sciencespo.fr",
+      "registered-by": "xtimbeau",
+      "registered-at": "2026-08-22"
+    }
   ]
 }
