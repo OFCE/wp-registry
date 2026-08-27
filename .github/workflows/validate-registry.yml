@@ -2,16 +2,15 @@
 # Cette CI est declaree comme "required status check" sur la branche main
 # (voir Settings > Branches) : une PR ne peut pas etre fusionnee tant que ce
 # job n'est pas vert. Le nom du job (`Validate registry.json`) est conserve
-# a l'identique malgre la restructuration en wp/*.json, car il est reference
+# a l'identique malgre la restructuration en wp/*.json (herite de l'ancien
+# registry.json a la racine, supprime a l'etape 3), car il est reference
 # directement par la branch protection et par un ruleset independants — le
 # renommer casserait ces deux configurations.
 #
-# Etape de transition (voir plan de restructuration) : cette CI valide
-# desormais wp/*.json (nouvelle disposition) en plus de registry.json /
-# registry.schema.json (racine, encore presents pour compatibilite avec les
-# versions anterieures d'ofceweb). Controles :
-#   1. JSON bien forme pour chaque fichier (wp/index.json, wp/{annee}.json,
-#      registry.json).
+# Etape 3/3 de la restructuration (voir plan) : l'ancienne disposition
+# (registry.json / registry.schema.json a la racine) a ete supprimee. Cette
+# CI ne valide plus que wp/*.json. Controles :
+#   1. JSON bien forme pour chaque fichier (wp/index.json, wp/{annee}.json).
 #   2. Conformite au schema JSON (wp/registry.schema.json) pour chaque
 #      fichier annuel.
 #   3. Aucune entree "repo" ne doit pointer hors de l'organisation ofce
@@ -26,14 +25,11 @@ name: Validate registry.json
 on:
   pull_request:
     paths:
-      - registry.json
-      - registry.schema.json
       - wp/**
       - .github/workflows/validate-registry.yml
   push:
     branches: [main]
     paths:
-      - registry.json
       - wp/**
 
 jobs:
@@ -43,25 +39,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: JSON bien forme (registry.json, racine)
-        if: hashFiles('registry.json') != ''
-        run: jq empty registry.json
-
-      - name: Conformite au schema (registry.json, racine)
-        if: hashFiles('registry.json') != ''
-        run: npx --yes ajv-cli validate --spec=draft7 --strict=false -s registry.schema.json -d registry.json
-
-      - name: Toutes les entrees "repo" pointent vers ofce/* (registry.json, racine)
-        if: hashFiles('registry.json') != ''
-        run: |
-          BAD=$(jq -r '.wp[] | select(.type == "repo") | select((.["source-repo"] // "") | startswith("ofce/") | not) | "\(.annee)/\(.wp) -> \(.["source-repo"] // "null")"' registry.json)
-          if [ -n "$BAD" ]; then
-            echo "::error::Entrees de type repo dont le source-repo n'est pas sous ofce/ (registry.json) :"
-            echo "$BAD"
-            exit 1
-          fi
-          echo "OK : toutes les entrees repo de registry.json sont sous ofce/*."
 
       - name: JSON bien forme (wp/*.json)
         run: |
@@ -146,3 +123,4 @@ jobs:
             exit 1
           fi
           echo "OK : wp/index.json coherent avec les fichiers wp/*.json presents."
+
