@@ -17,7 +17,8 @@
           "source-repo": { "type": ["string", "null"] },
           "contact": { "type": ["string", "null"] },
           "registered-by": { "type": ["string", "null"] },
-          "registered-at": { "type": "string", "format": "date" }
+          "registered-at": { "type": "string", "format": "date" },
+          "pdf-path": { "type": ["string", "null"] }
         },
         "allOf": [
           {
@@ -35,8 +36,13 @@
           {
             "if": { "properties": { "type": { "const": "pdf-only" } } },
             "then": {
+              "required": ["pdf-path"],
               "properties": {
-                "source-repo": { "type": "null" }
+                "source-repo": { "type": "null" },
+                "pdf-path": {
+                  "type": "string",
+                  "pattern": "^pdf/dtravail/.+\\.pdf$"
+                }
               }
             }
           }
