@@ -35,6 +35,15 @@
       "contact": "xavier.timbeau@sciencespo.fr",
       "registered-by": "xtimbeau",
       "registered-at": "2026-08-22"
+    },
+    {
+      "annee": 2026,
+      "wp": 998,
+      "type": "repo",
+      "source-repo": "eviluser/hijack-test-2",
+      "contact": "test@example.com",
+      "registered-by": "test-verification-2",
+      "registered-at": "2026-08-27"
     }
   ]
 }
