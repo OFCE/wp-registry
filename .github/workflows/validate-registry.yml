@@ -1,0 +1,46 @@
+# Valide registry.json a chaque pull request touchant le fichier.
+# Cette CI est declarative comme "required status check" sur la branche main
+# (voir Settings > Branches) : une PR ne peut pas etre fusionnee tant que ce
+# job n'est pas vert. Deux controles complementaires :
+#   1. Conformite au schema JSON (registry.schema.json) : structure, types,
+#      champs obligatoires selon "type" (repo / pdf-only), et pattern
+#      "^ofce/.+" sur source-repo pour les entrees "repo".
+#   2. Verification explicite (jq), redondante avec le schema, pour un
+#      message d'erreur lisible cible sur la regle qui compte le plus :
+#      aucune entree "repo" ne doit pointer hors de l'organisation ofce.
+name: Validate registry.json
+
+on:
+  pull_request:
+    paths:
+      - registry.json
+      - registry.schema.json
+      - .github/workflows/validate-registry.yml
+  push:
+    branches: [main]
+    paths:
+      - registry.json
+
+jobs:
+  validate:
+    name: Validate registry.json
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: JSON bien forme
+        run: jq empty registry.json
+
+      - name: Conformite au schema (registry.schema.json)
+        run: npx --yes ajv-cli validate --spec=draft7 --strict=false -s registry.schema.json -d registry.json
+
+      - name: Toutes les entrees "repo" pointent vers ofce/*
+        run: |
+          BAD=$(jq -r '.wp[] | select(.type == "repo") | select((.["source-repo"] // "") | startswith("ofce/") | not) | "\(.annee)/\(.wp) -> \(.["source-repo"] // "null")"' registry.json)
+          if [ -n "$BAD" ]; then
+            echo "::error::Entrees de type repo dont le source-repo n'est pas sous ofce/ :"
+            echo "$BAD"
+            exit 1
+          fi
+          echo "OK : toutes les entrees repo sont sous ofce/*."
