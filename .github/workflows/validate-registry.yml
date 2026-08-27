@@ -1,13 +1,26 @@
-# Valide registry.json a chaque pull request touchant le fichier.
-# Cette CI est declarative comme "required status check" sur la branche main
+# Valide les fichiers du registre a chaque pull request touchant wp/.
+# Cette CI est declaree comme "required status check" sur la branche main
 # (voir Settings > Branches) : une PR ne peut pas etre fusionnee tant que ce
-# job n'est pas vert. Deux controles complementaires :
-#   1. Conformite au schema JSON (registry.schema.json) : structure, types,
-#      champs obligatoires selon "type" (repo / pdf-only), et pattern
-#      "^ofce/.+" sur source-repo pour les entrees "repo".
-#   2. Verification explicite (jq), redondante avec le schema, pour un
-#      message d'erreur lisible cible sur la regle qui compte le plus :
-#      aucune entree "repo" ne doit pointer hors de l'organisation ofce.
+# job n'est pas vert. Le nom du job (`Validate registry.json`) est conserve
+# a l'identique malgre la restructuration en wp/*.json, car il est reference
+# directement par la branch protection et par un ruleset independants — le
+# renommer casserait ces deux configurations.
+#
+# Etape de transition (voir plan de restructuration) : cette CI valide
+# desormais wp/*.json (nouvelle disposition) en plus de registry.json /
+# registry.schema.json (racine, encore presents pour compatibilite avec les
+# versions anterieures d'ofceweb). Controles :
+#   1. JSON bien forme pour chaque fichier (wp/index.json, wp/{annee}.json,
+#      registry.json).
+#   2. Conformite au schema JSON (wp/registry.schema.json) pour chaque
+#      fichier annuel.
+#   3. Aucune entree "repo" ne doit pointer hors de l'organisation ofce
+#      (pattern deja impose par le schema, verification jq redondante pour
+#      un message d'erreur lisible).
+#   4. Coherence annee/nom de fichier : chaque entree d'un fichier
+#      wp/{annee}.json doit avoir `annee == annee` du nom de fichier.
+#   5. Coherence wp/index.json <-> fichiers presents : chaque annee listee
+#      dans l'index doit avoir un fichier wp/{annee}.json, et reciproquement.
 name: Validate registry.json
 
 on:
@@ -15,11 +28,13 @@ on:
     paths:
       - registry.json
       - registry.schema.json
+      - wp/**
       - .github/workflows/validate-registry.yml
   push:
     branches: [main]
     paths:
       - registry.json
+      - wp/**
 
 jobs:
   validate:
@@ -29,18 +44,105 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: JSON bien forme
+      - name: JSON bien forme (registry.json, racine)
+        if: hashFiles('registry.json') != ''
         run: jq empty registry.json
 
-      - name: Conformite au schema (registry.schema.json)
+      - name: Conformite au schema (registry.json, racine)
+        if: hashFiles('registry.json') != ''
         run: npx --yes ajv-cli validate --spec=draft7 --strict=false -s registry.schema.json -d registry.json
 
-      - name: Toutes les entrees "repo" pointent vers ofce/*
+      - name: Toutes les entrees "repo" pointent vers ofce/* (registry.json, racine)
+        if: hashFiles('registry.json') != ''
         run: |
           BAD=$(jq -r '.wp[] | select(.type == "repo") | select((.["source-repo"] // "") | startswith("ofce/") | not) | "\(.annee)/\(.wp) -> \(.["source-repo"] // "null")"' registry.json)
           if [ -n "$BAD" ]; then
-            echo "::error::Entrees de type repo dont le source-repo n'est pas sous ofce/ :"
+            echo "::error::Entrees de type repo dont le source-repo n'est pas sous ofce/ (registry.json) :"
             echo "$BAD"
             exit 1
           fi
-          echo "OK : toutes les entrees repo sont sous ofce/*."
+          echo "OK : toutes les entrees repo de registry.json sont sous ofce/*."
+
+      - name: JSON bien forme (wp/*.json)
+        run: |
+          shopt -s nullglob
+          for f in wp/index.json wp/*.json; do
+            jq empty "$f"
+          done
+
+      - name: Conformite au schema (wp/{annee}.json)
+        run: |
+          shopt -s nullglob
+          for f in wp/*.json; do
+            base=$(basename "$f")
+            if [ "$base" = "index.json" ] || [ "$base" = "registry.schema.json" ]; then
+              continue
+            fi
+            npx --yes ajv-cli validate --spec=draft7 --strict=false -s wp/registry.schema.json -d "$f"
+          done
+
+      - name: Toutes les entrees "repo" pointent vers ofce/* (wp/*.json)
+        run: |
+          shopt -s nullglob
+          BAD=""
+          for f in wp/*.json; do
+            base=$(basename "$f")
+            if [ "$base" = "index.json" ] || [ "$base" = "registry.schema.json" ]; then
+              continue
+            fi
+            entries=$(jq -r '.wp[] | select(.type == "repo") | select((.["source-repo"] // "") | startswith("ofce/") | not) | "\(.annee)/\(.wp) -> \(.["source-repo"] // "null")"' "$f")
+            if [ -n "$entries" ]; then
+              BAD="${BAD}${f}:\n${entries}\n"
+            fi
+          done
+          if [ -n "$BAD" ]; then
+            echo "::error::Entrees de type repo dont le source-repo n'est pas sous ofce/ :"
+            echo -e "$BAD"
+            exit 1
+          fi
+          echo "OK : toutes les entrees repo de wp/*.json sont sous ofce/*."
+
+      - name: Coherence annee <-> nom de fichier (wp/{annee}.json)
+        run: |
+          shopt -s nullglob
+          BAD=""
+          for f in wp/*.json; do
+            base=$(basename "$f")
+            if [ "$base" = "index.json" ] || [ "$base" = "registry.schema.json" ]; then
+              continue
+            fi
+            year="${base%.json}"
+            mismatched=$(jq -r --arg year "$year" '.wp[] | select((.annee | tostring) != $year) | "\(.annee)/\(.wp)"' "$f")
+            if [ -n "$mismatched" ]; then
+              BAD="${BAD}${f} (attendu annee=${year}): ${mismatched}\n"
+            fi
+          done
+          if [ -n "$BAD" ]; then
+            echo "::error::Incoherence annee/nom de fichier :"
+            echo -e "$BAD"
+            exit 1
+          fi
+          echo "OK : annee coherente avec le nom de fichier dans tous les wp/*.json."
+
+      - name: Coherence wp/index.json <-> fichiers presents
+        run: |
+          shopt -s nullglob
+          index_years=$(jq -r '.years[]' wp/index.json | sort -n | uniq)
+          file_years=$(for f in wp/*.json; do
+            base=$(basename "$f")
+            if [ "$base" = "index.json" ] || [ "$base" = "registry.schema.json" ]; then
+              continue
+            fi
+            echo "${base%.json}"
+          done | sort -n | uniq)
+          MISSING_FILES=$(comm -23 <(echo "$index_years") <(echo "$file_years"))
+          MISSING_INDEX=$(comm -13 <(echo "$index_years") <(echo "$file_years"))
+          if [ -n "$MISSING_FILES" ]; then
+            echo "::error::Annees listees dans wp/index.json sans fichier wp/{annee}.json correspondant : $MISSING_FILES"
+            exit 1
+          fi
+          if [ -n "$MISSING_INDEX" ]; then
+            echo "::error::Fichiers wp/{annee}.json presents mais absents de wp/index.json : $MISSING_INDEX"
+            exit 1
+          fi
+          echo "OK : wp/index.json coherent avec les fichiers wp/*.json presents."

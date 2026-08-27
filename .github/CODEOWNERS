@@ -1,3 +1,4 @@
 # .github/CODEOWNERS
 *              @xtimbeau
 /registry.json @xtimbeau
+/wp/           @xtimbeau
