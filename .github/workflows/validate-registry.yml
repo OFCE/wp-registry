@@ -58,7 +58,7 @@ jobs:
             npx --yes ajv-cli validate --spec=draft7 --strict=false -s wp/registry.schema.json -d "$f"
           done
 
-      - name: Toutes les entrees "repo" pointent vers ofce/* (wp/*.json)
+      - name: Toutes les entrees "repo" pointent vers OFCE/* (wp/*.json)
         run: |
           shopt -s nullglob
           BAD=""
@@ -67,17 +67,17 @@ jobs:
             if [ "$base" = "index.json" ] || [ "$base" = "registry.schema.json" ]; then
               continue
             fi
-            entries=$(jq -r '.wp[] | select(.type == "repo") | select((.["source-repo"] // "") | startswith("ofce/") | not) | "\(.annee)/\(.wp) -> \(.["source-repo"] // "null")"' "$f")
+            entries=$(jq -r '.wp[] | select(.type == "repo") | select((.["source-repo"] // "") | startswith("OFCE/") | not) | "\(.annee)/\(.wp) -> \(.["source-repo"] // "null")"' "$f")
             if [ -n "$entries" ]; then
               BAD="${BAD}${f}:\n${entries}\n"
             fi
           done
           if [ -n "$BAD" ]; then
-            echo "::error::Entrees de type repo dont le source-repo n'est pas sous ofce/ :"
+            echo "::error::Entrees de type repo dont le source-repo n'est pas sous OFCE/ :"
             echo -e "$BAD"
             exit 1
           fi
-          echo "OK : toutes les entrees repo de wp/*.json sont sous ofce/*."
+          echo "OK : toutes les entrees repo de wp/*.json sont sous OFCE/*."
 
       - name: Coherence annee <-> nom de fichier (wp/{annee}.json)
         run: |
@@ -123,4 +123,3 @@ jobs:
             exit 1
           fi
           echo "OK : wp/index.json coherent avec les fichiers wp/*.json presents."
-
