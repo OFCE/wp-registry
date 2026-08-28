@@ -28,7 +28,7 @@
               "properties": {
                 "source-repo": {
                   "type": "string",
-                  "pattern": "^ofce/.+"
+                  "pattern": "^OFCE/.+"
                 }
               }
             }
@@ -51,5 +51,3 @@
     }
   }
 }
-
-
