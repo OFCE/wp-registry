@@ -288,6 +288,15 @@
       "registered-by": "ofceweb-assistant",
       "registered-at": "2026-08-27",
       "pdf-path": "pdf/dtravail/OFCEWP2025-30.pdf"
+    },
+    {
+      "annee": 2025,
+      "wp": 24,
+      "type": "repo",
+      "source-repo": "OFCE/wp-gamp-gainemploi",
+      "contact": "guillaume.allegre@sciencespo.fr",
+      "registered-by": "gallegre",
+      "registered-at": "2026-09-03"
     }
   ]
 }
