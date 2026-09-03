@@ -96,6 +96,15 @@
       "registered-by": "ofceweb-assistant",
       "registered-at": "2026-08-27",
       "pdf-path": "pdf/dtravail/OFCEWP2026-08.pdf"
+    },
+    {
+      "annee": 2026,
+      "wp": 11,
+      "type": "repo",
+      "source-repo": "OFCE/wp-gamp-gainemploi",
+      "contact": "xavier.timbeau@sciencespo.fr",
+      "registered-by": "xtimbeau",
+      "registered-at": "2026-09-03"
     }
   ]
 }
