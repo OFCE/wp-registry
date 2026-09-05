@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Registre central des PB OFCE",
+  "type": "object",
+  "required": ["pb"],
+  "properties": {
+    "pb": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["annee", "pb", "type", "registered-by", "registered-at"],
+        "additionalProperties": false,
+        "properties": {
+          "annee": { "type": "integer", "minimum": 2000 },
+          "pb": { "type": "integer", "minimum": 1 },
+          "type": { "type": "string", "enum": ["repo", "pdf-only"] },
+          "source-repo": { "type": ["string", "null"] },
+          "contact": { "type": ["string", "null"] },
+          "registered-by": { "type": ["string", "null"] },
+          "registered-at": { "type": "string", "format": "date" },
+          "pdf-path": { "type": ["string", "null"] }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "type": { "const": "repo" } } },
+            "then": {
+              "required": ["source-repo", "contact"],
+              "properties": {
+                "source-repo": {
+                  "type": "string",
+                  "pattern": "^OFCE/.+"
+                }
+              }
+            }
+          },
+          {
+            "if": { "properties": { "type": { "const": "pdf-only" } } },
+            "then": {
+              "required": ["pdf-path"],
+              "properties": {
+                "source-repo": { "type": "null" },
+                "pdf-path": {
+                  "type": "string",
+                  "pattern": "^pdf/pbrief/.+\\.pdf$"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

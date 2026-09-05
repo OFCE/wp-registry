@@ -12,33 +12,6 @@
     },
     {
       "annee": 2026,
-      "wp": 6,
-      "type": "repo",
-      "source-repo": "OFCE/wp-gaxt-trec",
-      "contact": "xavier.timbeau@sciencespo.fr",
-      "registered-by": "xtimbeau",
-      "registered-at": "2026-08-22"
-    },
-    {
-      "annee": 2026,
-      "wp": 9,
-      "type": "repo",
-      "source-repo": "OFCE/wp-bl-cahier",
-      "contact": "benjamin.largier@sciencespo.fr",
-      "registered-by": "xtimbeau",
-      "registered-at": "2026-08-22"
-    },
-    {
-      "annee": 2026,
-      "wp": 10,
-      "type": "repo",
-      "source-repo": "OFCE/wp-gaxt-acit",
-      "contact": "xavier.timbeau@sciencespo.fr",
-      "registered-by": "xtimbeau",
-      "registered-at": "2026-08-22"
-    },
-    {
-      "annee": 2026,
       "wp": 2,
       "type": "pdf-only",
       "source-repo": null,
@@ -79,6 +52,15 @@
     },
     {
       "annee": 2026,
+      "wp": 6,
+      "type": "repo",
+      "source-repo": "OFCE/wp-gaxt-trec",
+      "contact": "xavier.timbeau@sciencespo.fr",
+      "registered-by": "xtimbeau",
+      "registered-at": "2026-08-22"
+    },
+    {
+      "annee": 2026,
       "wp": 7,
       "type": "pdf-only",
       "source-repo": null,
@@ -96,6 +78,24 @@
       "registered-by": "ofceweb-assistant",
       "registered-at": "2026-08-27",
       "pdf-path": "pdf/dtravail/OFCEWP2026-08.pdf"
+    },
+    {
+      "annee": 2026,
+      "wp": 9,
+      "type": "repo",
+      "source-repo": "OFCE/wp-bl-cahier",
+      "contact": "benjamin.largier@sciencespo.fr",
+      "registered-by": "xtimbeau",
+      "registered-at": "2026-08-22"
+    },
+    {
+      "annee": 2026,
+      "wp": 10,
+      "type": "repo",
+      "source-repo": "OFCE/wp-gaxt-acit",
+      "contact": "xavier.timbeau@sciencespo.fr",
+      "registered-by": "xtimbeau",
+      "registered-at": "2026-08-22"
     }
   ]
 }
