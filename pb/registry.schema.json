@@ -8,10 +8,9 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["annee", "pb", "type", "registered-by", "registered-at"],
+        "required": ["pb", "type", "registered-by", "registered-at"],
         "additionalProperties": false,
         "properties": {
-          "annee": { "type": "integer", "minimum": 2000 },
           "pb": { "type": "integer", "minimum": 1 },
           "type": { "type": "string", "enum": ["repo", "pdf-only"] },
           "source-repo": { "type": ["string", "null"] },
