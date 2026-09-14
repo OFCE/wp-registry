@@ -43,12 +43,12 @@
     {
       "annee": 2024,
       "wp": 5,
-      "type": "pdf-only",
-      "source-repo": null,
-      "contact": null,
-      "registered-by": "ofceweb-assistant",
-      "registered-at": "2026-09-03",
-      "pdf-path": "pdf/dtravail/OFCEWP2024-05.pdf"
+      "type": "repo",
+      "source-repo": "OFCE/wp-mpxt-villecompacte",
+      "contact": "54633745+xtimbeau@users.noreply.github.com",
+      "registered-by": "xtimbeau",
+      "registered-at": "2026-09-14",
+      "pdf-path": "wp/2024/5/OFCEWP2024-5.pdf"
     },
     {
       "annee": 2024,
