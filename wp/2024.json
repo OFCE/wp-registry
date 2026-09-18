@@ -143,8 +143,8 @@
     {
       "annee": 2024,
       "wp": 15,
-      "type": "pdf-only",
-      "source-repo": null,
+      "type": "repo",
+      "source-repo": "OFCE/wp-hp-prodige",
       "contact": null,
       "registered-by": "ofceweb-assistant",
       "registered-at": "2026-09-03",
