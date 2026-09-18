@@ -96,6 +96,15 @@
       "contact": "xavier.timbeau@sciencespo.fr",
       "registered-by": "xtimbeau",
       "registered-at": "2026-08-22"
+    },
+    {
+      "annee": 2026,
+      "wp": 11,
+      "type": "repo",
+      "source-repo": "ofce/wp-hp-parenthood",
+      "contact": "84387311+hperivier@users.noreply.github.com",
+      "registered-by": "hperivier",
+      "registered-at": "2026-09-18"
     }
   ]
 }
