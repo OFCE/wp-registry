@@ -161,14 +161,6 @@
       "registered-by": "ofceweb-assistant",
       "registered-at": "2026-09-05",
       "pdf-path": "pdf/pbrief/2026/OFCEpbrief157.pdf"
-    },
-    {
-      "pb": 158,
-      "type": "repo",
-      "source-repo": "OFCE/pb-MB-stem",
-      "contact": "elliot.aurissergues@sciencespo.fr",
-      "registered-by": "ellaurscpo",
-      "registered-at": "2026-10-07"
     }
   ]
 }
