@@ -1,0 +1,14 @@
+{
+  "report": [
+    {
+      "report": 1,
+      "annee" : 2026,
+      "type": "pdf-only",
+      "source-repo": null,
+      "contact": null,
+      "registered-by": "ofceweb-assistant",
+      "registered-at": "2026-10-22",
+      "pdf-path": "pdf/report/2026/rapport-bceh-dpts-2026-1.pdf"
+    }
+  ]
+}
