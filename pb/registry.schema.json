@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Registre central des PB OFCE",
+  "title": "Registre central des PB — fichier d'une série (pb/{pb_series}.json)",
   "type": "object",
   "required": ["pb"],
   "properties": {
@@ -8,10 +8,11 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["pb", "type", "registered-by", "registered-at"],
+        "required": ["pb", "pb_series", "type", "registered-by", "registered-at"],
         "additionalProperties": false,
         "properties": {
           "pb": { "type": "integer", "minimum": 1 },
+          "pb_series": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
           "type": { "type": "string", "enum": ["repo", "pdf-only"] },
           "source-repo": { "type": ["string", "null"] },
           "contact": { "type": ["string", "null"] },

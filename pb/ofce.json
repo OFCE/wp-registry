@@ -2,7 +2,7 @@
   "pb": [
     {
       "pb": 140,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -12,7 +12,7 @@
     },
     {
       "pb": 141,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -22,7 +22,7 @@
     },
     {
       "pb": 142,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -32,7 +32,7 @@
     },
     {
       "pb": 143,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -42,7 +42,7 @@
     },
     {
       "pb": 144,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -52,7 +52,7 @@
     },
     {
       "pb": 145,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -62,7 +62,7 @@
     },
     {
       "pb": 146,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -72,7 +72,7 @@
     },
     {
       "pb": 147,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -82,7 +82,7 @@
     },
     {
       "pb": 148,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -92,7 +92,7 @@
     },
     {
       "pb": 149,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -102,7 +102,7 @@
     },
     {
       "pb": 150,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -112,7 +112,7 @@
     },
     {
       "pb": 151,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -122,7 +122,7 @@
     },
     {
       "pb": 152,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -132,7 +132,7 @@
     },
     {
       "pb": 153,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -142,7 +142,7 @@
     },
     {
       "pb": 154,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -152,7 +152,7 @@
     },
     {
       "pb": 155,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -162,7 +162,7 @@
     },
     {
       "pb": 156,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,
@@ -172,7 +172,7 @@
     },
     {
       "pb": 157,
-      "institut": "ofce",
+      "pb_series": "ofce",
       "type": "pdf-only",
       "source-repo": null,
       "contact": null,

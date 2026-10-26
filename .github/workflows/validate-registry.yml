@@ -20,17 +20,38 @@
 #      wp/{annee}.json doit avoir `annee == annee` du nom de fichier.
 #   5. Coherence wp/index.json <-> fichiers presents : chaque annee listee
 #      dans l'index doit avoir un fichier wp/{annee}.json, et reciproquement.
+#
+# Registre PB (pb/), valide dans le meme job pour beneficier du meme
+# "required status check". Les PB sont repartis en series (une par
+# institut d'origine : ofce, ife, ...), chacune numerotee a partir de 1 dans
+# son propre fichier pb/{serie}.json. pb/index.json declare les series et
+# leur statut (`open`). pb/pb.json est l'ancien fichier plat, fige : il n'est
+# plus valide contre le schema et ne doit plus etre modifie. Controles :
+#   6. JSON bien forme pour chaque fichier pb/*.json.
+#   7. Conformite de pb/index.json a pb/index.schema.json.
+#   8. Conformite de chaque fichier de serie a pb/registry.schema.json.
+#   9. Coherence pb/index.json <-> fichiers pb/{serie}.json presents.
+#  10. Coherence pb_series/nom de fichier : chaque entree de pb/{serie}.json
+#      doit avoir `pb_series == serie`.
+#  11. Unicite du numero `pb` dans chaque serie.
+#  12. Unicite de `source-repo` toutes series confondues (un depot ne
+#      publie qu'un seul PB).
+#  13. (PR uniquement) pb/pb.json ne doit pas etre modifie.
+#  14. (PR uniquement) aucun nouveau numero dans une serie fermee
+#      (`open: false` dans le pb/index.json de la branche cible).
 name: Validate registry.json
 
 on:
   pull_request:
     paths:
       - wp/**
+      - pb/**
       - .github/workflows/validate-registry.yml
   push:
     branches: [main]
     paths:
       - wp/**
+      - pb/**
 
 jobs:
   validate:
@@ -39,6 +60,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Historique complet : les controles 13 et 14 comparent la PR a sa
+          # branche cible.
+          fetch-depth: 0
 
       - name: JSON bien forme (wp/*.json)
         run: |
@@ -123,3 +148,147 @@ jobs:
             exit 1
           fi
           echo "OK : wp/index.json coherent avec les fichiers wp/*.json presents."
+
+      # ---- Registre PB (pb/) ----------------------------------------------
+      # Fichiers de serie : pb/*.json sauf index.json, pb.json (ancien
+      # fichier plat, fige) et les schemas.
+
+      - name: JSON bien forme (pb/*.json)
+        run: |
+          shopt -s nullglob
+          for f in pb/*.json; do
+            jq empty "$f"
+          done
+
+      - name: Conformite au schema (pb/index.json)
+        run: |
+          npx --yes ajv-cli validate --spec=draft7 --strict=false -s pb/index.schema.json -d pb/index.json
+
+      - name: Conformite au schema (pb/{serie}.json)
+        run: |
+          shopt -s nullglob
+          for f in pb/*.json; do
+            case "$(basename "$f")" in
+              index.json|pb.json|*.schema.json) continue ;;
+            esac
+            npx --yes ajv-cli validate --spec=draft7 --strict=false -s pb/registry.schema.json -d "$f"
+          done
+
+      - name: Coherence pb/index.json <-> fichiers presents
+        run: |
+          shopt -s nullglob
+          index_series=$(jq -r '.series | keys[]' pb/index.json | sort -u)
+          file_series=$(for f in pb/*.json; do
+            base=$(basename "$f")
+            case "$base" in
+              index.json|pb.json|*.schema.json) continue ;;
+            esac
+            echo "${base%.json}"
+          done | sort -u)
+          MISSING_FILES=$(comm -23 <(echo "$index_series") <(echo "$file_series"))
+          MISSING_INDEX=$(comm -13 <(echo "$index_series") <(echo "$file_series"))
+          if [ -n "$MISSING_FILES" ]; then
+            echo "::error::Series listees dans pb/index.json sans fichier pb/{serie}.json correspondant : $MISSING_FILES"
+            exit 1
+          fi
+          if [ -n "$MISSING_INDEX" ]; then
+            echo "::error::Fichiers pb/{serie}.json presents mais absents de pb/index.json : $MISSING_INDEX"
+            exit 1
+          fi
+          echo "OK : pb/index.json coherent avec les fichiers pb/*.json presents."
+
+      - name: Coherence pb_series <-> nom de fichier, unicite de pb par serie
+        run: |
+          shopt -s nullglob
+          BAD=""
+          for f in pb/*.json; do
+            base=$(basename "$f")
+            case "$base" in
+              index.json|pb.json|*.schema.json) continue ;;
+            esac
+            serie="${base%.json}"
+            mismatched=$(jq -r --arg s "$serie" '.pb[] | select(.pb_series != $s) | "pb \(.pb) : pb_series=\(.pb_series)"' "$f")
+            if [ -n "$mismatched" ]; then
+              BAD="${BAD}${f} (attendu pb_series=${serie}) : ${mismatched}\n"
+            fi
+            dups=$(jq -r '[.pb[].pb] | group_by(.) | map(select(length > 1)[0]) | .[]' "$f")
+            if [ -n "$dups" ]; then
+              BAD="${BAD}${f} : numeros en double : ${dups}\n"
+            fi
+          done
+          if [ -n "$BAD" ]; then
+            echo "::error::Incoherences dans les fichiers de serie PB :"
+            echo -e "$BAD"
+            exit 1
+          fi
+          echo "OK : pb_series coherent et numeros uniques dans chaque serie."
+
+      - name: Unicite de source-repo (toutes series PB)
+        run: |
+          shopt -s nullglob
+          files=()
+          for f in pb/*.json; do
+            case "$(basename "$f")" in
+              index.json|pb.json|*.schema.json) continue ;;
+            esac
+            files+=("$f")
+          done
+          [ ${#files[@]} -eq 0 ] && exit 0
+          # Comparaison insensible a la casse : GitHub traite owner/repo sans
+          # tenir compte de la casse.
+          dups=$(jq -r '.pb[] | select(.type == "repo") | "\(.["source-repo"] | ascii_downcase)\t\(.pb_series)/\(.pb)"' "${files[@]}" \
+            | sort | awk -F'\t' '{n[$1]++; e[$1]=e[$1] " " $2} END {for (r in n) if (n[r] > 1) print r " ->" e[r]}')
+          if [ -n "$dups" ]; then
+            echo "::error::Depots enregistres plusieurs fois :"
+            echo "$dups"
+            exit 1
+          fi
+          echo "OK : chaque source-repo n'apparait qu'une fois."
+
+      - name: pb/pb.json fige (PR uniquement)
+        if: github.event_name == 'pull_request'
+        run: |
+          if git diff --name-only "origin/${{ github.base_ref }}...HEAD" -- pb/pb.json | grep -q .; then
+            echo "::error::pb/pb.json est l'ancien registre plat, fige : les nouvelles entrees vont dans pb/{serie}.json. Mettre a jour ofceweb si cette PR vient de pb_registry_request()."
+            exit 1
+          fi
+          echo "OK : pb/pb.json non modifie."
+
+      - name: Pas de nouveau numero dans une serie fermee (PR uniquement)
+        if: github.event_name == 'pull_request'
+        run: |
+          BASE="origin/${{ github.base_ref }}"
+          # Statut lu sur la branche cible : une PR ne peut pas rouvrir une
+          # serie et y ajouter un numero dans le meme mouvement. Sans
+          # pb/index.json sur la cible (premiere introduction), on lit celui
+          # de la PR.
+          if git cat-file -e "$BASE:pb/index.json" 2>/dev/null; then
+            index_json=$(git show "$BASE:pb/index.json")
+          else
+            index_json=$(cat pb/index.json)
+          fi
+          closed=$(echo "$index_json" | jq -r '.series | to_entries[] | select(.value.open == false) | .key')
+          BAD=""
+          for s in $closed; do
+            f="pb/$s.json"
+            [ -f "$f" ] || continue
+            # Fichier de serie absent de la cible : la PR introduit la serie
+            # (ex. migration de pb/pb.json vers pb/ofce.json) -- rien a
+            # comparer, la relecture de l'admin fait foi.
+            if ! git cat-file -e "$BASE:$f" 2>/dev/null; then
+              echo "::notice::$f introduit par cette PR -- controle des series fermees ignore pour ce fichier."
+              continue
+            fi
+            head_nums=$(jq -r '.pb[].pb' "$f" | sort -u)
+            base_nums=$(git show "$BASE:$f" | jq -r '.pb[].pb' | sort -u)
+            new_nums=$(comm -13 <(echo "$base_nums") <(echo "$head_nums") | grep . || true)
+            if [ -n "$new_nums" ]; then
+              BAD="${BAD}serie ${s} (fermee) : nouveaux numeros $(echo $new_nums)\n"
+            fi
+          done
+          if [ -n "$BAD" ]; then
+            echo "::error::Ajout dans une serie fermee :"
+            echo -e "$BAD"
+            exit 1
+          fi
+          echo "OK : aucune serie fermee ne recoit de nouveau numero."

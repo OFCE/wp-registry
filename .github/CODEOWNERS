@@ -1,3 +1,4 @@
 # .github/CODEOWNERS
 *              @xtimbeau
 /wp/           @xtimbeau
+/pb/           @xtimbeau
