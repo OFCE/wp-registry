@@ -1,0 +1,20 @@
+{
+  "series": {
+    "ofce": {
+      "open": false,
+      "label": "OFCE",
+      "path-prefix": "",
+      "pdf-prefix": "OFCEPB",
+      "draft-prefix": "ofce-draft",
+      "container-title": "Policy Brief de l'OFCE"
+    },
+    "ife": {
+      "open": true,
+      "label": "IFE",
+      "path-prefix": "ife/",
+      "pdf-prefix": "IFEPB",
+      "draft-prefix": "ife-draft",
+      "container-title": "Policy Brief de l'IFE"
+    }
+  }
+}

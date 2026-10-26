@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Index des séries de PB (pb/index.json)",
+  "description": "Chaque clé de `series` est un identifiant de série ; le fichier pb/{clé}.json doit exister. `open: false` ferme la série aux nouvelles demandes.",
+  "type": "object",
+  "required": ["series"],
+  "additionalProperties": false,
+  "properties": {
+    "series": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[a-z][a-z0-9-]*$" },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["open", "label", "path-prefix", "pdf-prefix", "draft-prefix", "container-title"],
+        "additionalProperties": false,
+        "properties": {
+          "open": { "type": "boolean" },
+          "label": { "type": "string", "minLength": 1 },
+          "path-prefix": { "type": "string", "pattern": "^([a-z0-9-]+/)?$" },
+          "pdf-prefix": { "type": "string", "pattern": "^[A-Za-z0-9]+$" },
+          "draft-prefix": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "container-title": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}
