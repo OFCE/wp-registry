@@ -1,5 +1,13 @@
 {
   "pb": [
-    
+    {
+      "pb": 1,
+      "pb_series": "ife",
+      "type": "repo",
+      "source-repo": "OFCE/pb-ceskvv-chn",
+      "contact": "elliot.aurissergues@sciencespo.fr",
+      "registered-by": "ellaurscpo",
+      "registered-at": "2026-10-30"
+    }
   ]
 }
