@@ -105,6 +105,15 @@
       "contact": "helene.perivier@sciencespo.fr",
       "registered-by": "hperivier",
       "registered-at": "2026-09-18"
+    },
+    {
+      "annee": 2026,
+      "wp": 12,
+      "type": "repo",
+      "source-repo": "ofce/wp-cj-mobsoclit",
+      "contact": "cyril.jayet@sorbonne-universite.fr",
+      "registered-by": "cyrjay",
+      "registered-at": "2026-11-09"
     }
   ]
 }
