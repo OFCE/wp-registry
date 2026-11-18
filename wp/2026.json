@@ -114,6 +114,15 @@
       "contact": "cyril.jayet@sorbonne-universite.fr",
       "registered-by": "cyrjay",
       "registered-at": "2026-11-09"
+    },
+    {
+      "annee": 2026,
+      "wp": 13,
+      "type": "repo",
+      "source-repo": "OFCE/wp-xt-adjust",
+      "contact": "xavier.timbeau@sciencespo.fr",
+      "registered-by": "xtimbeau",
+      "registered-at": "2026-11-18"
     }
   ]
 }
