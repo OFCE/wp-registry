@@ -123,6 +123,15 @@
       "contact": "xavier.timbeau@sciencespo.fr",
       "registered-by": "xtimbeau",
       "registered-at": "2026-11-18"
+    },
+    {
+      "annee": 2026,
+      "wp": 14,
+      "type": "repo",
+      "source-repo": "OFCE/wp-cg-retraites",
+      "contact": "54633745+xtimbeau@users.noreply.github.com",
+      "registered-by": "xtimbeau",
+      "registered-at": "2026-11-18"
     }
   ]
 }
